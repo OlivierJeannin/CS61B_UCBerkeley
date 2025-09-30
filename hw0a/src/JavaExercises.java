@@ -42,12 +42,13 @@ public class JavaExercises {
      */
     public static String stutter(String s) {
         // TODO: Fill in this function
-        StringBuilder stringBuilder = new StringBuilder();
+        String ret = "";
         for (int i = 0; i < s.length(); i++) {
-            stringBuilder.append(s.charAt(i));
-            stringBuilder.append(s.charAt(i));
+            char ch = s.charAt(i);
+            ret += ch;
+            ret += ch;
         }
-        return stringBuilder.toString();
+        return ret;
     }
 
     /**
