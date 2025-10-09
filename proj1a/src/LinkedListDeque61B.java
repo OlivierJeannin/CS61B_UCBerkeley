@@ -67,9 +67,7 @@ public class LinkedListDeque61B<T> implements Deque61B<T> {
 
     @Override
     public boolean isEmpty() {
-        return (this.size == 0)
-                && (sentinel.prev == sentinel)
-                && (sentinel.next == sentinel);
+        return this.size == 0;
     }
 
     @Override
