@@ -11,13 +11,27 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
 
     public ArrayDeque61B() {
         arr = (T[]) new Object[8];
-        nextFirst = 3;
-        nextLast = 4;
+        nextFirst = arr.length - 1;
+        nextLast = 0;
         size = 0;
+    }
+
+    /** Assumes that the requirements for a resizing are met. */
+    private void resize(int length) {
+        T[] newArr = (T[]) new Object[length];
+        for (int i = 0; i < size; i++) {
+            newArr[i] = arr[Math.floorMod(nextFirst + i + 1, arr.length)];
+        }
+        arr = newArr;
+        nextFirst = newArr.length - 1;
+        nextLast = size;
     }
 
     @Override
     public void addFirst(T x) {
+        if (size >= arr.length) {
+            resize(2 * arr.length);
+        }
         arr[nextFirst] = x;
         nextFirst = Math.floorMod(nextFirst - 1, arr.length);
         size++;
@@ -25,6 +39,9 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
 
     @Override
     public void addLast(T x) {
+        if (size >= arr.length) {
+            resize(2 * arr.length);
+        }
         arr[nextLast] = x;
         nextLast = Math.floorMod(nextLast + 1, arr.length);
         size++;
@@ -51,14 +68,28 @@ public class ArrayDeque61B<T> implements Deque61B<T> {
 
     @Override
     public T removeFirst() {
-//        size--;
-        return null;
+        if (size == 0) {
+            return null;
+        }
+        if (arr.length >= 16 && size <= arr.length / 4) {
+            resize(arr.length / 2);
+        }
+        nextFirst = Math.floorMod(nextFirst + 1, arr.length);
+        size--;
+        return arr[nextFirst];
     }
 
     @Override
     public T removeLast() {
-//        size--;
-        return null;
+        if (size == 0) {
+            return null;
+        }
+        if (arr.length >= 16 && size <= arr.length / 4) {
+            resize(arr.length / 2);
+        }
+        nextLast = Math.floorMod(nextLast - 1, arr.length);
+        size--;
+        return arr[nextLast];
     }
 
     @Override
