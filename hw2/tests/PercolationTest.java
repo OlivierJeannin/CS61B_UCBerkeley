@@ -8,7 +8,7 @@ public class PercolationTest {
     /**
      * Enum to represent the state of a cell in the grid. Use this enum to help you write tests.
      * <p>
-     * (0) CLOSED: isOpen() returns true, isFull() return false
+     * (0) CLOSED: isOpen() returns false, isFull() return false
      * <p>
      * (1) OPEN: isOpen() returns true, isFull() returns false
      * <p>
@@ -63,6 +63,7 @@ public class PercolationTest {
             p.open(site[0], site[1]);
         }
         assertThat(getState(N, p)).isEqualTo(expectedState);
+        assertThat(p.numberOfOpenSites()).isEqualTo(6);
         assertThat(p.percolates()).isFalse();
     }
 
@@ -78,11 +79,31 @@ public class PercolationTest {
         assertThat(p.percolates()).isTrue();
     }
 
-    // TODO: Using the given tests above as a template,
-    //       write some more tests and delete the fail() line
     @Test
-    public void yourFirstTestHere() {
-        fail("Did you write your own tests?");
+    public void backwashTest() {
+        int N = 4;
+        Percolation p = new Percolation(N);
+        int[][] openSites = {
+                {3, 0},
+                {3, 1},
+                {3, 3},
+                {0, 1},
+                {1, 1},
+                {2, 1},
+                {2, 3},
+        };
+        Cell[][] expectedState = {
+                {Cell.CLOSED, Cell.FULL, Cell.CLOSED, Cell.CLOSED},
+                {Cell.CLOSED, Cell.FULL, Cell.CLOSED, Cell.CLOSED},
+                {Cell.CLOSED, Cell.FULL, Cell.CLOSED, Cell.OPEN},
+                {Cell.FULL, Cell.FULL, Cell.CLOSED, Cell.OPEN},
+        };
+        for (int[] site : openSites) {
+            p.open(site[0], site[1]);
+        }
+        assertThat(getState(N, p)).isEqualTo(expectedState);
+        assertThat(p.numberOfOpenSites()).isEqualTo(7);
+        assertThat(p.percolates()).isTrue();
     }
 
 }
