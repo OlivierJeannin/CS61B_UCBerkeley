@@ -1,0 +1,27 @@
+# of strings: 1,000  2,000  4,000  8,000  10,000  20,000  30,000  40,000  80,000  100,000  200,000  400,000  800,000
+
+string length: 500
+ULLMap:        .03    .05    .19    .96    1.79    12.97   31.83     s       s        s        s        s        s
+BSTMap:        .01    .02    .03    .05     .07     .13     .21     .43     .64     .82      1.58     3.62     6.88
+TreeMap:       .01    .02    .02    .07     .07     .13     .21     .52     .64     .85      1.52     3.70     7.03
+HashMap:       .01    .01    .03    .06     .06     .13     .20     .39     .61     .78      1.50     3.05     6.26
+
+string length: 1000
+ULLMap:        .04    .07    .19    .94    1.72    11.71   32.08     s        s       s        s        s        s
+BSTMap:        .03    .03    .06    .11     .13     .26     .40     .55     1.16    1.43     2.94     6.03     12.69
+TreeMap:       .02    .03    .05    .11     .13     .27     .44     .56     1.20    1.38     2.94     5.92     12.21
+HashMap:       .01    .03    .05    .11     .14     .29     .44     .56     1.17    1.43     2.84     5.78     11.48
+
+string length: 5000
+ULLMap:        .14    .17    .47   1.42    2.43    14.13   38.52     s        s       s        s        s        s
+BSTMap:        .09    .13    .25    .51     .62     1.24    1.89    2.54    5.12     6.37     12.88   25.97      h
+TreeMap:       .06    .13    .25    .53     .61     1.25    1.90    2.57    5.20     6.44     12.79   26.35      h
+HashMap:       .07    .15    .29    .53     .66     1.30    2.02    2.68    5.36     6.76     13.48   27.47      h
+
+
+* all running times are in terms of seconds
+* 's' means stack overflow occurs during runtime
+* 'h' means the program is out of heap memory
+
+
+The running times of BSTMap, at least in this experiment of mine, is closer to linear time than logarithm.
