@@ -1,7 +1,6 @@
 package ngrams;
 
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * An object for mapping a year number (e.g. 1996) to numerical data. Provides
@@ -30,15 +29,18 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public TimeSeries(TimeSeries ts, int startYear, int endYear) {
         super();
-        // TODO: Fill in this constructor.
+        for (int year: ts.keySet()) {
+            if (year >= startYear && year <= endYear) {
+                put(year, ts.get(year));
+            }
+        }
     }
 
     /**
      *  Returns all years for this time series in ascending order.
      */
     public List<Integer> years() {
-        // TODO: Fill in this method.
-        return null;
+        return new ArrayList<>(keySet());
     }
 
     /**
@@ -46,8 +48,11 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      *  order of years().
      */
     public List<Double> data() {
-        // TODO: Fill in this method.
-        return null;
+        List<Double> list = new ArrayList<>();
+        for (int year : years()) {
+            list.add(get(year));
+        }
+        return list;
     }
 
     /**
@@ -60,8 +65,40 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      * should store the value from the TimeSeries that contains that year.
      */
     public TimeSeries plus(TimeSeries ts) {
-        // TODO: Fill in this method.
-        return null;
+        List<Integer> years1 = this.years();
+        List<Double> data1 = this.data();
+        List<Integer> years2 = ts.years();
+        List<Double> data2 = ts.data();
+
+        TimeSeries ret = new TimeSeries();
+        int i1 = 0;
+        int i2 = 0;
+        while (i1 < years1.size() && i2 < years2.size()) {  // both lists have remaining elements
+            int year1 = years1.get(i1);
+            int year2 = years2.get(i2);
+            double d1 = data1.get(i1);
+            double d2 = data2.get(i2);
+            if (year1 < year2) {
+                ret.put(year1, d1);
+                i1++;
+            } else if (year1 > year2) {
+                ret.put(year2, d2);
+                i2++;
+            } else {
+                ret.put(year1, d1 + d2);
+                i1++;
+                i2++;
+            }
+        }
+        while (i1 < years1.size()) {  // list1 still has remaining elements
+            ret.put(years1.get(i1), data1.get(i1));
+            i1++;
+        }
+        while (i2 < years2.size()) {  // list2 still has remaining elements
+            ret.put(years2.get(i2), data2.get(i2));
+            i2++;
+        }
+        return ret;
     }
 
     /**
@@ -74,10 +111,20 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      * If TS has a year that is not in this TimeSeries, ignore it.
      */
     public TimeSeries dividedBy(TimeSeries ts) {
-        // TODO: Fill in this method.
-        return null;
-    }
+        Set<Integer> years1 = this.keySet();
+        Set<Integer> years2 = ts.keySet();
 
-    // TODO: Add any private helper methods.
-    // TODO: Remove all TODO comments before submitting.
+        Set<Integer> intersection = new TreeSet<>(years1);
+        intersection.retainAll(years2);
+
+        if (!intersection.equals(years1)) {
+            throw new IllegalArgumentException();
+        }
+
+        TimeSeries ret = new TimeSeries();
+        for (Integer year: intersection) {
+            ret.put(year, this.get(year) / ts.get(year));
+        }
+        return ret;
+    }
 }
