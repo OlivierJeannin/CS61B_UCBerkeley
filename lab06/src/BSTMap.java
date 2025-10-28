@@ -27,28 +27,60 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     @Override
     public void put(K key, V value) {
-        root = putHelper(key, value, root);
+        root = putHelperRecursive(key, value, root);
+        // putHelperIterative(key, value);
     }
 
     /** Maps {@code key} to {@code value} in a subtree rooted at {@code r}.
-     * Increases {@code size} of this BST if the key is newly added.
      *
      * @return address of the subtree's root (possibly modified)
      */
-    private Node putHelper(K key, V value, Node r) {
+    private Node putHelperRecursive(K key, V value, Node r) {
         if (r == null) {
             size += 1;
             return new Node(key, value);
         }
         int cmp = key.compareTo(r.key);
         if (cmp < 0) {
-            r.left = putHelper(key, value, r.left);
+            r.left = putHelperRecursive(key, value, r.left);
         } else if (cmp > 0) {
-            r.right = putHelper(key, value, r.right);
+            r.right = putHelperRecursive(key, value, r.right);
         } else {
             r.value = value;
         }
         return r;
+    }
+
+    /** An iterative approach to put(). */
+    private void putHelperIterative(K key, V value) {
+        if (root == null) {
+            root = new Node(key, value);
+            size++;
+            return;
+        }
+        Node curr = root;
+        while (true) {
+            int cmp = key.compareTo(curr.key);
+            if (cmp == 0) {
+                curr.value = value;
+                return;
+            }
+            if (cmp < 0) {
+                if (curr.left == null) {
+                    curr.left = new Node(key, value);
+                    size++;
+                    return;
+                }
+                curr = curr.left;
+            } else {
+                if (curr.right == null) {
+                    curr.right = new Node(key, value);
+                    size++;
+                    return;
+                }
+                curr = curr.right;
+            }
+        }
     }
 
     /** Iteratively traverse this BST for the node with the mapping of the given key.
@@ -75,8 +107,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         Node n = findIteratively(key);
         if (n == null) {
             return null;
-        }
-        else {
+        } else {
             return n.value;
         }
     }
