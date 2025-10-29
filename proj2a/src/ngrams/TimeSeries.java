@@ -29,6 +29,9 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      */
     public TimeSeries(TimeSeries ts, int startYear, int endYear) {
         super();
+        if (ts == null) {
+            throw new IllegalArgumentException();
+        }
         for (int year: ts.keySet()) {
             if (year >= startYear && year <= endYear) {
                 put(year, ts.get(year));
@@ -65,40 +68,33 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      * should store the value from the TimeSeries that contains that year.
      */
     public TimeSeries plus(TimeSeries ts) {
-        List<Integer> years1 = this.years();
-        List<Double> data1 = this.data();
-        List<Integer> years2 = ts.years();
-        List<Double> data2 = ts.data();
+        if (ts == null) {
+            throw new IllegalArgumentException();
+        }
 
-        TimeSeries ret = new TimeSeries();
-        int i1 = 0;
-        int i2 = 0;
-        while (i1 < years1.size() && i2 < years2.size()) {  // both lists have remaining elements
-            int year1 = years1.get(i1);
-            int year2 = years2.get(i2);
-            double d1 = data1.get(i1);
-            double d2 = data2.get(i2);
-            if (year1 < year2) {
-                ret.put(year1, d1);
-                i1++;
-            } else if (year1 > year2) {
-                ret.put(year2, d2);
-                i2++;
-            } else {
-                ret.put(year1, d1 + d2);
-                i1++;
-                i2++;
-            }
+        Set<Integer> years1 = this.keySet();
+        Set<Integer> years2 = ts.keySet();
+
+        Set<Integer> intersection = new HashSet<>(years1);
+        intersection.retainAll(years2);
+
+        Set<Integer> onlyInYears1 = new HashSet<>(years1);
+        onlyInYears1.removeAll(years2);
+
+        Set<Integer> onlyInYears2 = new HashSet<>(years2);
+        onlyInYears2.removeAll(years1);
+
+        TimeSeries sum = new TimeSeries();
+        for (int year : intersection) {
+            sum.put(year, this.get(year) + ts.get(year));
         }
-        while (i1 < years1.size()) {  // list1 still has remaining elements
-            ret.put(years1.get(i1), data1.get(i1));
-            i1++;
+        for (int year : onlyInYears1) {
+            sum.put(year, this.get(year));
         }
-        while (i2 < years2.size()) {  // list2 still has remaining elements
-            ret.put(years2.get(i2), data2.get(i2));
-            i2++;
+        for (int year : onlyInYears2) {
+            sum.put(year, ts.get(year));
         }
-        return ret;
+        return sum;
     }
 
     /**
@@ -111,20 +107,24 @@ public class TimeSeries extends TreeMap<Integer, Double> {
      * If TS has a year that is not in this TimeSeries, ignore it.
      */
     public TimeSeries dividedBy(TimeSeries ts) {
+        if (ts == null) {
+            throw new IllegalArgumentException();
+        }
+
         Set<Integer> years1 = this.keySet();
         Set<Integer> years2 = ts.keySet();
 
-        Set<Integer> intersection = new TreeSet<>(years1);
+        Set<Integer> intersection = new HashSet<>(years1);
         intersection.retainAll(years2);
 
         if (!intersection.equals(years1)) {
             throw new IllegalArgumentException();
         }
 
-        TimeSeries ret = new TimeSeries();
+        TimeSeries quotient = new TimeSeries();
         for (Integer year: intersection) {
-            ret.put(year, this.get(year) / ts.get(year));
+            quotient.put(year, this.get(year) / ts.get(year));
         }
-        return ret;
+        return quotient;
     }
 }
