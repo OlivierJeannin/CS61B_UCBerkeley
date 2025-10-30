@@ -116,7 +116,7 @@ public class NGramMap {
     public TimeSeries summedWeightHistory(Collection<String> words,
                                           int startYear, int endYear) {
         TimeSeries summedCountHistory = new TimeSeries();
-        for (String word: words) {
+        for (String word : words) {
             summedCountHistory = summedCountHistory.plus(countHistory(word, startYear, endYear));
         }
         return summedCountHistory.dividedBy(this.countsData);

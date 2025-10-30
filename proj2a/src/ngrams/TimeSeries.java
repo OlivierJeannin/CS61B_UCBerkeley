@@ -32,7 +32,7 @@ public class TimeSeries extends TreeMap<Integer, Double> {
         if (ts == null) {
             throw new IllegalArgumentException();
         }
-        for (int year: ts.keySet()) {
+        for (int year : ts.keySet()) {
             if (year >= startYear && year <= endYear) {
                 put(year, ts.get(year));
             }
@@ -122,7 +122,7 @@ public class TimeSeries extends TreeMap<Integer, Double> {
         }
 
         TimeSeries quotient = new TimeSeries();
-        for (Integer year: intersection) {
+        for (Integer year : intersection) {
             quotient.put(year, this.get(year) / ts.get(year));
         }
         return quotient;
