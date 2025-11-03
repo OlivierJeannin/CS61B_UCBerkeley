@@ -1,0 +1,14 @@
+BucketsSpeedTest:
+With L = 1000, all types of buckets have nearly identical performance when N is in the tens of thousands.
+For very large N (e.g. one million), however, buckets implemented as ArrayList or LinkedList
+take twice as long as those made from other data structures.
+
+InsertRandomSpeedTest:
+The time taken by ULLMap grows rapidly when N is increased by 10,000, and heap memory is soon out.
+In contrast, execution times of MyHashMap and Java's built-in HashMap are roughly on the same order.
+Both grows linearly with N, which means each add operation takes constant time.
+
+InsertInOrderSpeedTest:
+When the input strings are sorted, implementations using trees without balancing would easily degenerate
+to linked lists rather than trees.
+Since balancing takes extra time, each add operation in TreeMaps is slower than in HashMap.

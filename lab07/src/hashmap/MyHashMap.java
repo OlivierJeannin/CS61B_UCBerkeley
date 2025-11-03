@@ -172,7 +172,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public Set<K> keySet() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -180,12 +180,10 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * or null if there is no such mapping.
      * Not required for this lab. If you don't implement this, throw an
      * UnsupportedOperationException.
-     *
-     * @param key
      */
     @Override
     public V remove(K key) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -195,7 +193,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public Iterator<K> iterator() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /* Private Helpers */
