@@ -30,8 +30,11 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     /* Instance Variables */
     private Collection<Node>[] buckets;
     // You should probably define some more!
-    private int capacity;
+
+    private final int initialCapacity;
     private final double maxLoadFactor;
+
+    private int capacity;
     private int size;
 
     /** Constructors */
@@ -51,12 +54,14 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * @param loadFactor maximum load factor
      */
     public MyHashMap(int initialCapacity, double loadFactor) {
+        this.initialCapacity = initialCapacity;
+        this.maxLoadFactor = loadFactor;
+
         capacity = initialCapacity;
-        maxLoadFactor = loadFactor;
         size = 0;
 
-        buckets = new Collection[capacity];
-        for (int i = 0; i < capacity;i++) {
+        buckets = new Collection[initialCapacity];
+        for (int i = 0; i < buckets.length; i++) {
             buckets[i] = createBucket();
         }
     }
@@ -85,7 +90,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return new ArrayList<>();
     }
 
-    // TODO: Implement the methods of the Map61B Interface below
+    // Implement the methods of the Map61B Interface below
     // Your code won't compile until you do so!
 
     /**
@@ -99,7 +104,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
             throw new IllegalArgumentException();
         }
 
-        Node node = nodeWithKey(key);
+        Node node = getNode(key);
         if (node != null) {
             // key was found present in this map; replace value
             node.value = value;
@@ -108,7 +113,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
         // key not found in this map; add a new mapping
         node = new Node(key, value);
-        bucketForKey(key, buckets).add(node);
+        getBucket(buckets, key).add(node);
         size++;
 
         if (currentLoadFactor() > maxLoadFactor) {
@@ -122,7 +127,11 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V get(K key) {
-        return null;
+        Node node = getNode(key);
+        if (node == null) {
+            return null;
+        }
+        return node.value;
     }
 
     /**
@@ -130,7 +139,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public boolean containsKey(K key) {
-        return nodeWithKey(key) != null;
+        return getNode(key) != null;
     }
 
     /**
@@ -146,9 +155,16 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public void clear() {
+        buckets = new Collection[initialCapacity];  // use initialCapacity as length of empty array
+        for (int i = 0; i < buckets.length; i++) {
+            buckets[i] = createBucket();
+        }
+
+        capacity = initialCapacity;
+        size = 0;
     }
 
-    // TODO below are optional tasks; test them with TestHashMapExtra.java
+    /* TODO optional tasks */
 
     /**
      * Returns a Set view of the keys contained in this map. Not required for this lab.
@@ -184,25 +200,29 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     /* Private Helpers */
 
-    /** Returns the current load factor (N / M) of this hash map. */
+    /**
+     * Returns the current load factor (N / M) of this hash map.
+     */
     private double currentLoadFactor() {
         return size * 1.0 / capacity;
     }
 
     /**
-     * Returns the address of the bucket which the given key corresponds to,
+     * Returns the address of the bucket which the given key should fall into,
      * according to the key's hashcode.
      *
      * @param buckets the array of all available buckets
      */
-    private Collection<Node> bucketForKey(K key, Collection<Node>[] buckets) {
+    private Collection<Node> getBucket(Collection<Node>[] buckets, K key) {
         int index = Math.floorMod(key.hashCode(), buckets.length);
         return buckets[index];
     }
 
-    /** Returns the node containing the given key, or null if no such node was found. */
-    private Node nodeWithKey(K key) {
-        Collection<Node> bucket = bucketForKey(key, buckets);
+    /**
+     * Returns the node containing the given key, or null if no such node was found.
+     */
+    private Node getNode(K key) {
+        Collection<Node> bucket = getBucket(buckets, key);
         for (Node node : bucket) {
             if (node.key.equals(key)) {
                 return node;
@@ -213,20 +233,19 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     /**
      * Doubles the capacity of {@code buckets} array, and re-hashes all the elements.
-     *
      * Assumes N / M is larger than the maximum load factor.
      */
     private void resize() {
         capacity *= 2;
         Collection<Node>[] newBuckets = new Collection[capacity];
-        for (int i = 0; i < capacity;i++) {
+        for (int i = 0; i < newBuckets.length; i++) {
             newBuckets[i] = createBucket();
         }
 
         // re-hash all elements
         for (Collection<Node> bucket : buckets) {
             for (Node node : bucket) {
-                bucketForKey(node.key, newBuckets).add(node);
+                getBucket(newBuckets, node.key).add(node);
             }
         }
 
