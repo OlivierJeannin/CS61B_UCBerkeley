@@ -109,7 +109,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
         // key not found in this map; add a new mapping
         node = new Node(key, value);
-        getBucket(buckets, key).add(node);
+        getBucket(key, buckets).add(node);
         keySet.add(key);
         size += 1;
         if (currentLoadFactor() > maxLoadFactor) {
@@ -173,8 +173,15 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key) {
-        // TODO should take amortized constant time
-        throw new UnsupportedOperationException();
+        Node node = getNode(key);
+        if (node == null) {
+            return null;
+        }
+        V value = node.value;
+        getBucket(key, buckets).remove(node);
+        size -= 1;
+        keySet.remove(key);
+        return value;
     }
 
     /**
@@ -219,7 +226,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      *
      * @param buckets the array of all available buckets
      */
-    private Collection<Node> getBucket(Collection<Node>[] buckets, K key) {
+    private Collection<Node> getBucket(K key, Collection<Node>[] buckets) {
         int index = Math.floorMod(key.hashCode(), buckets.length);
         return buckets[index];
     }
@@ -228,7 +235,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * Returns the node containing the given key, or null if no such node was found.
      */
     private Node getNode(K key) {
-        Collection<Node> bucket = getBucket(buckets, key);
+        Collection<Node> bucket = getBucket(key, buckets);
         for (Node node : bucket) {
             if (node.key.equals(key)) {
                 return node;
@@ -251,7 +258,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         // re-hash all elements
         for (Collection<Node> bucket : buckets) {
             for (Node node : bucket) {
-                getBucket(newBuckets, node.key).add(node);
+                getBucket(node.key, newBuckets).add(node);
             }
         }
 
