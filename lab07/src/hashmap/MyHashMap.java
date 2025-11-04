@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.HashSet;
 
 /**
  *  A hash table-backed Map implementation.
@@ -37,6 +38,8 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     private int capacity;
     private int size;
 
+    private Set<K> keySet;
+
     /** Constructors */
     public MyHashMap() {
         this(16, 0.75);
@@ -56,14 +59,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     public MyHashMap(int initialCapacity, double loadFactor) {
         this.initialCapacity = initialCapacity;
         this.maxLoadFactor = loadFactor;
-
-        capacity = initialCapacity;
-        size = 0;
-
-        buckets = new Collection[initialCapacity];
-        for (int i = 0; i < buckets.length; i++) {
-            buckets[i] = createBucket();
-        }
+        reset();
     }
 
     /**
@@ -114,8 +110,8 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         // key not found in this map; add a new mapping
         node = new Node(key, value);
         getBucket(buckets, key).add(node);
-        size++;
-
+        keySet.add(key);
+        size += 1;
         if (currentLoadFactor() > maxLoadFactor) {
             resize();
         }
@@ -155,16 +151,10 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public void clear() {
-        buckets = new Collection[initialCapacity];  // use initialCapacity as length of empty array
-        for (int i = 0; i < buckets.length; i++) {
-            buckets[i] = createBucket();
-        }
-
-        capacity = initialCapacity;
-        size = 0;
+        reset();
     }
 
-    /* TODO optional tasks */
+    /* optional inherited methods */
 
     /**
      * Returns a Set view of the keys contained in this map. Not required for this lab.
@@ -172,7 +162,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        return this.keySet;
     }
 
     /**
@@ -183,6 +173,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key) {
+        // TODO should take amortized constant time
         throw new UnsupportedOperationException();
     }
 
@@ -193,10 +184,27 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException();
+        return keySet().iterator();
     }
 
     /* Private Helpers */
+
+    /**
+     * Initializes/Resets this map instance.
+     * Sets the private collection variables and crucial values to their initial state.
+     * Make sure the value of {@code initialCapacity} is set before calling this method.
+     */
+    private void reset() {
+        buckets = new Collection[initialCapacity];
+        for (int i = 0; i < buckets.length; i++) {
+            buckets[i] = createBucket();
+        }
+
+        capacity = initialCapacity;
+        size = 0;
+
+        keySet = new HashSet<>();
+    }
 
     /**
      * Returns the current load factor (N / M) of this hash map.
